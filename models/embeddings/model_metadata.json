@@ -3,8 +3,8 @@
     "name": "all-MiniLM-L6-v2",
     "dimension": 384,
     "max_sequence_length": 256,
-    "load_time_seconds": 6.252870798110962,
-    "last_used": 1758401331.3126662,
-    "cache_dir": "models/embeddings"
+    "load_time_seconds": 5.257839202880859,
+    "last_used": 1758411856.1108758,
+    "cache_dir": "models\\embeddings"
   }
 }
