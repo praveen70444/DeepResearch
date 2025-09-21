@@ -7,7 +7,6 @@ import {
   Target, 
   Search, 
   CheckCircle, 
-  ArrowRight,
   Info,
   Zap,
   BookOpen,
