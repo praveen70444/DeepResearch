@@ -52,7 +52,8 @@ function HomePage() {
     setSearchResults(null);
     
     try {
-      const response = await fetch('https://deepresearch-2fou.onrender.com/research', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://deepresearch-2fou.onrender.com';
+      const response = await fetch(`${apiUrl}/research`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
