@@ -1,7 +1,7 @@
 # === Build tools (must come first) ===
+pip>=25.2
 setuptools>=68.0.0
-wheel>=0.42.0
-pip>=25.1
+wheel>=0.45.1
 
 # === Web Framework & API ===
 fastapi==0.104.1
