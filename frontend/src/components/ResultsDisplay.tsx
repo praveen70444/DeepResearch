@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   BookOpen, 
   ExternalLink, 
@@ -10,7 +10,10 @@ import {
   Star,
   Clock,
   Brain,
-  AlertCircle
+  AlertCircle,
+  FileText,
+  FileCode,
+  File
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -24,6 +27,20 @@ interface ResultsDisplayProps {
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
   const [expandedSources, setExpandedSources] = useState<Set<number>>(new Set());
   const [showReasoning, setShowReasoning] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const exportMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close export menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target as Node)) {
+        setShowExportMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const toggleSource = (index: number) => {
     const newExpanded = new Set(expandedSources);
@@ -38,6 +55,133 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success('Copied to clipboard');
+  };
+
+  const exportResearch = (format: 'txt' | 'md' | 'json') => {
+    if (!results || !results.success) return;
+
+    const { research_report, execution_time, sources_found, reasoning_steps } = results;
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `deep-research-${timestamp}`;
+
+    let content = '';
+    let mimeType = '';
+    let fileExtension = '';
+
+    switch (format) {
+      case 'txt':
+        content = generateTextExport(research_report, execution_time, sources_found, reasoning_steps);
+        mimeType = 'text/plain';
+        fileExtension = 'txt';
+        break;
+      case 'md':
+        content = generateMarkdownExport(research_report, execution_time, sources_found, reasoning_steps);
+        mimeType = 'text/markdown';
+        fileExtension = 'md';
+        break;
+      case 'json':
+        content = JSON.stringify(results, null, 2);
+        mimeType = 'application/json';
+        fileExtension = 'json';
+        break;
+    }
+
+    downloadFile(content, `${filename}.${fileExtension}`, mimeType);
+    toast.success(`Research exported as ${format.toUpperCase()}`);
+  };
+
+  const generateTextExport = (research_report: any, execution_time: number, sources_found: number, reasoning_steps: number) => {
+    const timestamp = new Date().toLocaleString();
+    
+    let content = `DEEP RESEARCHER - RESEARCH REPORT\n`;
+    content += `Generated on: ${timestamp}\n`;
+    content += `Execution Time: ${formatTime(execution_time)}\n`;
+    content += `Sources Found: ${sources_found}\n`;
+    content += `Reasoning Steps: ${reasoning_steps}\n`;
+    content += `Confidence Score: ${Math.round(research_report.confidence_score * 100)}%\n`;
+    content += `\n${'='.repeat(50)}\n\n`;
+    
+    // Research Summary
+    content += `RESEARCH SUMMARY\n`;
+    content += `${'='.repeat(20)}\n\n`;
+    content += research_report.summary.replace(/<[^>]*>/g, '').replace(/\n\s*\n/g, '\n\n');
+    
+    // Key Findings
+    if (research_report.key_findings && research_report.key_findings.length > 0) {
+      content += `\n\nKEY FINDINGS\n`;
+      content += `${'='.repeat(15)}\n\n`;
+      research_report.key_findings.forEach((finding: string, index: number) => {
+        content += `${index + 1}. ${finding}\n`;
+      });
+    }
+    
+    // Sources
+    if (research_report.sources && research_report.sources.length > 0) {
+      content += `\n\nSOURCES\n`;
+      content += `${'='.repeat(10)}\n\n`;
+      research_report.sources.forEach((source: any, index: number) => {
+        content += `Source ${index + 1}:\n`;
+        content += `Title: ${source.title || 'Untitled'}\n`;
+        if (source.relevance_score) {
+          content += `Relevance: ${Math.round(source.relevance_score * 100)}%\n`;
+        }
+        content += `Content: ${source.content.replace(/<[^>]*>/g, '').substring(0, 500)}...\n\n`;
+      });
+    }
+    
+    return content;
+  };
+
+  const generateMarkdownExport = (research_report: any, execution_time: number, sources_found: number, reasoning_steps: number) => {
+    const timestamp = new Date().toLocaleString();
+    
+    let content = `# Deep Researcher - Research Report\n\n`;
+    content += `**Generated on:** ${timestamp}\n`;
+    content += `**Execution Time:** ${formatTime(execution_time)}\n`;
+    content += `**Sources Found:** ${sources_found}\n`;
+    content += `**Reasoning Steps:** ${reasoning_steps}\n`;
+    content += `**Confidence Score:** ${Math.round(research_report.confidence_score * 100)}%\n\n`;
+    content += `---\n\n`;
+    
+    // Research Summary
+    content += `## Research Summary\n\n`;
+    content += research_report.summary;
+    
+    // Key Findings
+    if (research_report.key_findings && research_report.key_findings.length > 0) {
+      content += `\n\n## Key Findings\n\n`;
+      research_report.key_findings.forEach((finding: string, index: number) => {
+        content += `${index + 1}. ${finding}\n`;
+      });
+    }
+    
+    // Sources
+    if (research_report.sources && research_report.sources.length > 0) {
+      content += `\n\n## Sources\n\n`;
+      research_report.sources.forEach((source: any, index: number) => {
+        content += `### Source ${index + 1}\n\n`;
+        content += `**Title:** ${source.title || 'Untitled'}\n\n`;
+        if (source.relevance_score) {
+          content += `**Relevance:** ${Math.round(source.relevance_score * 100)}%\n\n`;
+        }
+        content += `**Content:**\n\n${source.content}\n\n`;
+        content += `---\n\n`;
+      });
+    }
+    
+    return content;
+  };
+
+  const downloadFile = (content: string, filename: string, mimeType: string) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const formatConfidence = (score: number) => {
@@ -188,10 +332,56 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
               <Copy className="w-4 h-4" />
               <span className="font-medium">Copy Summary</span>
             </button>
-            <button className="flex items-center space-x-2 px-4 py-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors">
-              <Download className="w-4 h-4" />
-              <span className="font-medium">Export PDF</span>
-            </button>
+            
+            {/* Export Dropdown */}
+            <div className="relative" ref={exportMenuRef}>
+              <button
+                onClick={() => setShowExportMenu(!showExportMenu)}
+                className="flex items-center space-x-2 px-4 py-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors"
+              >
+                <Download className="w-4 h-4" />
+                <span className="font-medium">Export</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {showExportMenu && (
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10">
+                  <div className="py-2">
+                    <button
+                      onClick={() => {
+                        exportResearch('txt');
+                        setShowExportMenu(false);
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <FileText className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Export as TXT</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        exportResearch('md');
+                        setShowExportMenu(false);
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <FileCode className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Export as Markdown</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        exportResearch('json');
+                        setShowExportMenu(false);
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <File className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Export as JSON</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            
             <button className="flex items-center space-x-2 px-4 py-2 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors">
               <Share2 className="w-4 h-4" />
               <span className="font-medium">Share</span>
