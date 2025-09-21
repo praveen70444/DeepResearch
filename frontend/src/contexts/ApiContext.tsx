@@ -20,6 +20,10 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const api = axios.create({
     baseURL: process.env.REACT_APP_API_URL || 'https://deepresearch-2fou.onrender.com',
     timeout: 30000,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    withCredentials: false,
   });
 
   const checkConnection = async (): Promise<boolean> => {

@@ -8,7 +8,7 @@ import DocumentUpload from './components/DocumentUpload';
 import SessionHistory from './components/SessionHistory';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { SessionProvider } from './contexts/SessionContext';
-import { ApiProvider } from './contexts/ApiContext';
+import { ApiProvider, useApi } from './contexts/ApiContext';
 
 function App() {
   return (
@@ -46,22 +46,14 @@ function App() {
 function HomePage() {
   const [searchResults, setSearchResults] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const { conductResearch } = useApi();
 
   const handleSearch = async (query: string) => {
     setIsSearching(true);
     setSearchResults(null);
     
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://deepresearch-2fou.onrender.com';
-      const response = await fetch(`${apiUrl}/research`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query }),
-      });
-      
-      const data = await response.json();
+      const data = await conductResearch(query);
       setSearchResults(data);
     } catch (error) {
       console.error('Search failed:', error);
