@@ -3,8 +3,6 @@ pip>=25.2
 setuptools>=68.0.0
 wheel>=0.45.1
 
-python-3.10.13
-
 
 # === Web Framework & API ===
 fastapi==0.104.1
