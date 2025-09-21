@@ -138,9 +138,12 @@ def get_mock_research_response(query: str) -> Dict[str, Any]:
     """Generate mock research response based on query."""
     query_lower = query.lower()
     
+    # AI and Technology topics
     if "ai" in query_lower or "artificial intelligence" in query_lower:
         data = MOCK_RESEARCH_DATA["ai_trends"]
-    elif "climate" in query_lower:
+    
+    # Climate and Environment topics
+    elif "climate" in query_lower or "environment" in query_lower:
         data = {
             "summary": "## Climate Change Impact Analysis\n\nClimate change continues to be one of the most pressing global challenges:\n\n### Key Impacts:\n- Rising global temperatures\n- Extreme weather events\n- Sea level rise\n- Ecosystem disruption\n\n### Mitigation Strategies:\n- Renewable energy adoption\n- Carbon capture technologies\n- Sustainable agriculture\n- International cooperation",
             "key_findings": [
@@ -162,13 +165,120 @@ def get_mock_research_response(query: str) -> Dict[str, Any]:
                 }
             ]
         }
+    
+    # Economic topics
+    elif any(word in query_lower for word in ["economic", "economy", "growth", "gdp", "inflation", "recession", "market", "finance", "business"]):
+        data = {
+            "summary": "## Economic Growth Analysis\n\nEconomic growth is driven by multiple interconnected factors that vary across countries and time periods:\n\n### Primary Growth Drivers:\n- **Human Capital Development**: Education, skills, and workforce productivity\n- **Technological Innovation**: R&D investment, digital transformation, and automation\n- **Infrastructure Investment**: Transportation, energy, and digital infrastructure\n- **Institutional Quality**: Rule of law, property rights, and regulatory efficiency\n- **Trade and Globalization**: International trade, foreign direct investment, and market access\n\n### Supporting Factors:\n- **Macroeconomic Stability**: Low inflation, stable exchange rates, and fiscal discipline\n- **Financial Development**: Access to credit, capital markets, and financial services\n- **Natural Resources**: Endowment and efficient utilization of natural assets\n- **Demographic Trends**: Population growth, age structure, and urbanization\n\n### Current Global Context:\n- Post-pandemic recovery patterns vary significantly across regions\n- Supply chain disruptions continue to impact growth\n- Inflation pressures require careful monetary policy management\n- Green transition presents both challenges and opportunities",
+            "key_findings": [
+                "Human capital accounts for 60-70% of economic growth in developed economies",
+                "Technology adoption can increase productivity by 15-25% in manufacturing sectors",
+                "Infrastructure investment has a multiplier effect of 1.5-2.0 on GDP growth",
+                "Institutional quality is the strongest predictor of long-term growth sustainability",
+                "Trade openness typically increases growth rates by 1-2 percentage points annually"
+            ],
+            "sources": [
+                {
+                    "title": "World Bank Global Economic Prospects 2024",
+                    "content": "Comprehensive analysis of global economic growth trends, drivers, and policy recommendations.",
+                    "relevance_score": 0.95
+                },
+                {
+                    "title": "IMF World Economic Outlook - Growth Drivers",
+                    "content": "Detailed examination of factors contributing to economic growth across different country groups.",
+                    "relevance_score": 0.92
+                },
+                {
+                    "title": "OECD Economic Policy Papers - Innovation and Growth",
+                    "content": "Research on the relationship between technological innovation, human capital, and economic growth.",
+                    "relevance_score": 0.88
+                }
+            ]
+        }
+    
+    # Health and Medicine topics
+    elif any(word in query_lower for word in ["health", "medical", "medicine", "healthcare", "disease", "treatment", "pharmaceutical", "drug"]):
+        data = {
+            "summary": "## Healthcare and Medical Research Analysis\n\nModern healthcare is experiencing unprecedented transformation through technological advancement and research innovation:\n\n### Key Developments:\n- **Precision Medicine**: Personalized treatments based on genetic profiles\n- **Digital Health**: AI-powered diagnostics, telemedicine, and health monitoring\n- **Biotechnology Advances**: mRNA vaccines, gene therapy, and regenerative medicine\n- **Preventive Care**: Early detection systems and lifestyle intervention programs\n\n### Current Challenges:\n- Healthcare accessibility and equity\n- Rising costs and resource allocation\n- Mental health crisis and treatment gaps\n- Global health security and pandemic preparedness",
+            "key_findings": [
+                "AI diagnostics show 95%+ accuracy in medical imaging analysis",
+                "Precision medicine reduces treatment costs by 30-40% for chronic diseases",
+                "Telemedicine adoption increased by 300% during the pandemic",
+                "Gene therapy treatments are showing 80%+ success rates for rare diseases",
+                "Preventive care programs reduce healthcare costs by 25% over 5 years"
+            ],
+            "sources": [
+                {
+                    "title": "Nature Medicine - Digital Health Revolution",
+                    "content": "Comprehensive review of digital health technologies and their impact on patient outcomes.",
+                    "relevance_score": 0.94
+                },
+                {
+                    "title": "WHO Global Health Observatory 2024",
+                    "content": "Latest data on global health trends, disease burden, and healthcare system performance.",
+                    "relevance_score": 0.91
+                }
+            ]
+        }
+    
+    # Education topics
+    elif any(word in query_lower for word in ["education", "learning", "school", "university", "student", "teaching", "pedagogy", "curriculum"]):
+        data = {
+            "summary": "## Education and Learning Analysis\n\nEducation systems worldwide are adapting to meet the demands of the 21st century:\n\n### Key Trends:\n- **Digital Learning**: Online platforms, virtual reality, and adaptive learning systems\n- **Skills-Based Education**: Focus on critical thinking, creativity, and digital literacy\n- **Personalized Learning**: AI-driven customization and individual learning paths\n- **Lifelong Learning**: Continuous education and professional development\n\n### Challenges and Opportunities:\n- Digital divide and access to technology\n- Teacher training and professional development\n- Assessment and evaluation methods\n- Equity and inclusion in education",
+            "key_findings": [
+                "Online learning increases retention rates by 25-60% compared to traditional methods",
+                "Personalized learning improves student outcomes by 30-40%",
+                "Digital literacy is now essential for 80% of modern jobs",
+                "Lifelong learning programs increase career advancement by 50%",
+                "Inclusive education practices benefit all students, not just those with special needs"
+            ],
+            "sources": [
+                {
+                    "title": "UNESCO Global Education Monitoring Report 2024",
+                    "content": "Comprehensive analysis of global education trends, challenges, and policy recommendations.",
+                    "relevance_score": 0.93
+                },
+                {
+                    "title": "MIT Technology Review - Future of Learning",
+                    "content": "Research on emerging technologies and their impact on education delivery and outcomes.",
+                    "relevance_score": 0.89
+                }
+            ]
+        }
+    
+    # Technology topics
+    elif any(word in query_lower for word in ["technology", "tech", "digital", "innovation", "startup", "software", "hardware", "cyber", "data"]):
+        data = {
+            "summary": "## Technology and Innovation Analysis\n\nTechnology continues to reshape industries and societies at an unprecedented pace:\n\n### Key Areas of Innovation:\n- **Artificial Intelligence**: Machine learning, natural language processing, and computer vision\n- **Quantum Computing**: Revolutionary computing power and cryptography\n- **5G and Connectivity**: Ultra-fast networks and IoT integration\n- **Blockchain and Web3**: Decentralized systems and digital assets\n- **Cybersecurity**: Advanced threat protection and data privacy\n\n### Impact on Society:\n- Automation and job transformation\n- Digital transformation of industries\n- Privacy and data protection concerns\n- Digital divide and accessibility",
+            "key_findings": [
+                "AI adoption is growing at 35% annually across industries",
+                "Quantum computing could solve problems 1000x faster than classical computers",
+                "5G networks will enable $13.2 trillion in global economic value by 2035",
+                "Cybersecurity spending increased by 12% globally in 2024",
+                "Digital transformation increases productivity by 20-30% in most sectors"
+            ],
+            "sources": [
+                {
+                    "title": "McKinsey Global Institute - Technology Trends 2024",
+                    "content": "Comprehensive analysis of emerging technologies and their business impact.",
+                    "relevance_score": 0.96
+                },
+                {
+                    "title": "IEEE Computer Society - Technology Forecast",
+                    "content": "Technical analysis of upcoming technologies and their potential applications.",
+                    "relevance_score": 0.88
+                }
+            ]
+        }
+    
+    # Default fallback for other topics
     else:
         data = {
-            "summary": f"## Research Analysis: {query}\n\nBased on your query '{query}', here's a comprehensive analysis:\n\n### Key Insights:\n- This topic involves multiple interconnected factors\n- Recent developments show significant progress\n- Future implications are promising\n- Stakeholder engagement is crucial\n\n### Recommendations:\n- Further research is needed\n- Implementation strategies should be considered\n- Monitoring and evaluation frameworks are essential",
+            "summary": f"## Research Analysis: {query}\n\nBased on comprehensive analysis of available sources, here are the key findings regarding \"{query}\":\n\n### Executive Summary\nThis research provides a detailed examination of the topic, synthesizing information from multiple authoritative sources to deliver actionable insights.\n\n### Key Insights\n- **Primary Finding**: The research reveals significant developments and trends in this area\n- **Secondary Finding**: Multiple perspectives and approaches have been identified\n- **Tertiary Finding**: Future implications and recommendations are outlined\n\n### Detailed Analysis\nThe research methodology involved systematic analysis of relevant sources, cross-referencing information, and synthesizing findings into coherent insights. The analysis reveals several important patterns and trends that are relevant to understanding this topic.\n\n### Recommendations\nBased on the research findings, several recommendations emerge:\n- Consider the primary trends identified\n- Evaluate the implications for your specific context\n- Monitor ongoing developments in this area\n\n### Conclusion\nThis research provides a solid foundation for understanding the topic and making informed decisions.",
             "key_findings": [
-                f"Finding 1: Important insight related to {query}",
-                f"Finding 2: Key development in {query}",
-                f"Finding 3: Future implications of {query}"
+                f"Important insight related to {query}",
+                f"Key development in {query}",
+                f"Future implications of {query}"
             ],
             "sources": [
                 {
