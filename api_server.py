@@ -42,7 +42,12 @@ app = FastAPI(title="Deep Researcher API", version="1.0.0", lifespan=lifespan)
 # Enable CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React dev server
+    allow_origins=[
+        "http://localhost:3000", 
+        "http://127.0.0.1:3000",
+        "https://deepresearchfrontend.vercel.app",
+        "https://deepresearchfrontend.netlify.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
