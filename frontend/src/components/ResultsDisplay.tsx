@@ -510,6 +510,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
       <ReasoningAssistant 
         reasoningSteps={reasoning_steps || 0}
         researchData={results}
+        query={results?.follow_up_context?.contextual_query || results?.research_report?.summary?.split('\n')[0] || 'Research Query'}
       />
 
       {/* Sources - Enhanced */}

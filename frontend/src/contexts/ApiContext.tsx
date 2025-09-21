@@ -9,6 +9,8 @@ interface ApiContextType {
   uploadDocuments: (files: File[]) => Promise<any>;
   conductResearch: (query: string, sessionId?: string) => Promise<any>;
   getSuggestions: (query: string, sessionId?: string) => Promise<any>;
+  conductFollowUpResearch: (originalQuery: string, followUpQuery: string, sessionId?: string) => Promise<any>;
+  getDetailedReasoning: (query: string, sessionId?: string) => Promise<any>;
 }
 
 const ApiContext = createContext<ApiContextType | undefined>(undefined);
@@ -97,6 +99,36 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const conductFollowUpResearch = async (originalQuery: string, followUpQuery: string, sessionId?: string) => {
+    try {
+      const response = await api.post('/follow-up', {
+        original_query: originalQuery,
+        follow_up_query: followUpQuery,
+        session_id: sessionId
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Follow-up research failed:', error);
+      throw error;
+    }
+  };
+
+  const getDetailedReasoning = async (query: string, sessionId?: string) => {
+    try {
+      const response = await api.post('/reasoning', {
+        query,
+        session_id: sessionId,
+        include_detailed_steps: true
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get detailed reasoning:', error);
+      throw error;
+    }
+  };
+
   return (
     <ApiContext.Provider value={{
       isConnected,
@@ -105,7 +137,9 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       getSystemStatus,
       uploadDocuments,
       conductResearch,
-      getSuggestions
+      getSuggestions,
+      conductFollowUpResearch,
+      getDetailedReasoning
     }}>
       {children}
     </ApiContext.Provider>

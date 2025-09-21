@@ -28,11 +28,13 @@ interface ReasoningStep {
 interface ReasoningAssistantProps {
   reasoningSteps: number;
   researchData: any;
+  query?: string;
 }
 
 const ReasoningAssistant: React.FC<ReasoningAssistantProps> = ({ 
   reasoningSteps, 
-  researchData 
+  researchData,
+  query 
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedStep, setSelectedStep] = useState<string | null>(null);

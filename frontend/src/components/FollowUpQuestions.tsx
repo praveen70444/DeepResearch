@@ -43,7 +43,7 @@ const FollowUpQuestions: React.FC<FollowUpQuestionsProps> = ({
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const { conductResearch } = useApi();
+  const { conductFollowUpResearch } = useApi();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestedQuestions = [
@@ -81,9 +81,8 @@ const FollowUpQuestions: React.FC<FollowUpQuestionsProps> = ({
     setIsProcessing(true);
 
     try {
-      // Create a contextual query that includes the original query and follow-up
-      const contextualQuery = `${initialQuery} - Follow-up: ${question}`;
-      const results = await conductResearch(contextualQuery);
+      // Use the dedicated follow-up research endpoint
+      const results = await conductFollowUpResearch(initialQuery, question);
       
       const assistantMessage: ConversationMessage = {
         id: (Date.now() + 1).toString(),

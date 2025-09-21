@@ -93,6 +93,17 @@ class SessionRequest(BaseModel):
     title: str
     description: Optional[str] = ""
 
+class FollowUpRequest(BaseModel):
+    original_query: str
+    follow_up_query: str
+    session_id: Optional[str] = None
+    context: Optional[Dict[str, Any]] = None
+
+class ReasoningRequest(BaseModel):
+    query: str
+    session_id: Optional[str] = None
+    include_detailed_steps: bool = True
+
 # Mock data for testing
 MOCK_RESEARCH_DATA = {
     "ai_trends": {
@@ -189,6 +200,170 @@ async def root():
         "mode": "mock" if mock_mode else "full",
         "version": "1.0.0"
     }
+
+@app.post("/follow-up")
+async def conduct_follow_up_research(request: FollowUpRequest):
+    """Conduct follow-up research based on original query and follow-up question."""
+    try:
+        start_time = time.time()
+        
+        # Create contextual query combining original and follow-up
+        contextual_query = f"{request.original_query} - Follow-up: {request.follow_up_query}"
+        
+        if mock_mode:
+            # Use mock data with enhanced follow-up context
+            research_data = get_mock_research_response(contextual_query)
+            execution_time = time.time() - start_time
+            
+            # Enhance mock data for follow-up context
+            research_data["summary"] = f"## Follow-up Research: {request.follow_up_query}\n\n" + research_data["summary"]
+            research_data["key_findings"].insert(0, f"Follow-up question: {request.follow_up_query}")
+            
+            return {
+                "success": True,
+                "research_report": research_data,
+                "execution_time": execution_time,
+                "sources_found": len(research_data["sources"]),
+                "reasoning_steps": 6,  # One extra step for follow-up processing
+                "mode": "mock",
+                "follow_up_context": {
+                    "original_query": request.original_query,
+                    "follow_up_query": request.follow_up_query,
+                    "contextual_query": contextual_query
+                }
+            }
+        else:
+            # Use real deep researcher with follow-up context
+            result = agent.research(
+                query=contextual_query,
+                session_id=request.session_id,
+                max_sources=request.max_sources or 10
+            )
+            
+            if not result['success']:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=result.get('error', 'Follow-up research failed')
+                )
+            
+            # Transform the result to match frontend expectations
+            research_report = result['research_report']
+            
+            return {
+                "success": True,
+                "research_report": {
+                    "summary": f"## Follow-up Research: {request.follow_up_query}\n\n" + research_report.summary,
+                    "key_findings": [f"Follow-up question: {request.follow_up_query}"] + research_report.key_findings,
+                    "confidence_score": research_report.confidence_score,
+                    "sources": [
+                        {
+                            "title": source.title if hasattr(source, 'title') else f"Source {i+1}",
+                            "content": source.content if hasattr(source, 'content') else str(source),
+                            "relevance_score": getattr(source, 'relevance_score', 0.8)
+                        }
+                        for i, source in enumerate(research_report.sources)
+                    ]
+                },
+                "execution_time": result.get('execution_time', 0),
+                "sources_found": result.get('sources_found', 0),
+                "reasoning_steps": result.get('reasoning_steps', 0) + 1,  # Extra step for follow-up
+                "mode": "full",
+                "follow_up_context": {
+                    "original_query": request.original_query,
+                    "follow_up_query": request.follow_up_query,
+                    "contextual_query": contextual_query
+                }
+            }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/reasoning")
+async def get_detailed_reasoning(request: ReasoningRequest):
+    """Get detailed reasoning steps for a research query."""
+    try:
+        if mock_mode:
+            # Generate mock detailed reasoning steps
+            reasoning_steps = [
+                {
+                    "id": "query-analysis",
+                    "title": "Query Analysis & Understanding",
+                    "description": "Analyzing the research question to identify key concepts, context, and scope",
+                    "details": f"I analyzed your query '{request.query}' by breaking it down into core components and identifying the main topics, subtopics, and specific information needs. This analysis helps me understand what type of research approach would be most effective and what sources would be most relevant.",
+                    "confidence": 0.95,
+                    "sources": ["Query parsing", "Intent recognition", "Context analysis"],
+                    "type": "analysis",
+                    "step_number": 1
+                },
+                {
+                    "id": "information-gathering",
+                    "title": "Information Gathering & Source Discovery",
+                    "description": "Searching and collecting relevant information from multiple sources",
+                    "details": f"I searched through various databases, academic papers, news articles, and other reliable sources to gather comprehensive information about '{request.query}'. This step involved identifying credible sources, checking for recency, and ensuring diversity in perspectives.",
+                    "confidence": 0.88,
+                    "sources": ["Academic databases", "News sources", "Expert opinions", "Research papers"],
+                    "type": "analysis",
+                    "step_number": 2
+                },
+                {
+                    "id": "data-synthesis",
+                    "title": "Data Synthesis & Pattern Recognition",
+                    "description": "Combining and analyzing information to identify patterns and insights",
+                    "details": f"I analyzed all gathered information about '{request.query}' to identify key patterns, trends, and relationships. This involved cross-referencing different sources, identifying consensus points, and highlighting areas of disagreement or uncertainty.",
+                    "confidence": 0.92,
+                    "sources": ["Cross-source analysis", "Pattern recognition", "Trend identification", "Statistical analysis"],
+                    "type": "synthesis",
+                    "step_number": 3
+                },
+                {
+                    "id": "critical-evaluation",
+                    "title": "Critical Evaluation & Validation",
+                    "description": "Evaluating the reliability and relevance of information",
+                    "details": f"I critically evaluated each piece of information about '{request.query}' for accuracy, relevance, and reliability. This included checking source credibility, identifying potential biases, and assessing the strength of evidence supporting different claims.",
+                    "confidence": 0.85,
+                    "sources": ["Source credibility assessment", "Bias detection", "Evidence evaluation", "Fact-checking"],
+                    "type": "validation",
+                    "step_number": 4
+                },
+                {
+                    "id": "conclusion-formation",
+                    "title": "Conclusion Formation & Summary",
+                    "description": "Synthesizing findings into coherent conclusions and recommendations",
+                    "details": f"Based on all the analysis of '{request.query}', I synthesized the findings into clear, actionable conclusions. This step involved weighing different perspectives, acknowledging limitations, and providing evidence-based recommendations.",
+                    "confidence": 0.87,
+                    "sources": ["Evidence synthesis", "Conclusion formation", "Recommendation development", "Quality assurance"],
+                    "type": "conclusion",
+                    "step_number": 5
+                }
+            ]
+            
+            return {
+                "success": True,
+                "reasoning_steps": reasoning_steps,
+                "total_steps": len(reasoning_steps),
+                "overall_confidence": 0.89,
+                "query": request.query,
+                "mode": "mock"
+            }
+        else:
+            # Use real reasoning from agent
+            reasoning_data = agent.get_detailed_reasoning(
+                request.query,
+                request.session_id,
+                include_detailed_steps=request.include_detailed_steps
+            )
+            
+            return {
+                "success": True,
+                "reasoning_steps": reasoning_data.get('steps', []),
+                "total_steps": reasoning_data.get('total_steps', 0),
+                "overall_confidence": reasoning_data.get('overall_confidence', 0.8),
+                "query": request.query,
+                "mode": "full"
+            }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/research")
 async def conduct_research(request: ResearchRequest):
