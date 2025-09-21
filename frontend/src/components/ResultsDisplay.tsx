@@ -15,6 +15,7 @@ import {
   FileCode,
   File
 } from 'lucide-react';
+import ReasoningAssistant from './ReasoningAssistant';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -504,6 +505,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
           )}
         </div>
       )}
+
+      {/* AI Reasoning Assistant */}
+      <ReasoningAssistant 
+        reasoningSteps={reasoning_steps || 0}
+        researchData={results}
+      />
 
       {/* Sources - Enhanced */}
       {research_report.sources && research_report.sources.length > 0 && (
