@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import Header from './components/Header';
 import SearchInterface from './components/SearchInterface';
 import ResultsDisplay from './components/ResultsDisplay';
+import FollowUpQuestions from './components/FollowUpQuestions';
 import DocumentUpload from './components/DocumentUpload';
 import SessionHistory from './components/SessionHistory';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -46,11 +47,13 @@ function App() {
 function HomePage() {
   const [searchResults, setSearchResults] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [currentQuery, setCurrentQuery] = useState<string>('');
   const { conductResearch } = useApi();
 
   const handleSearch = async (query: string) => {
     setIsSearching(true);
     setSearchResults(null);
+    setCurrentQuery(query);
     
     try {
       const data = await conductResearch(query);
@@ -60,6 +63,10 @@ function HomePage() {
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handleFollowUpResearch = (followUpQuery: string, results: any) => {
+    setSearchResults(results);
   };
 
   return (
@@ -76,7 +83,16 @@ function HomePage() {
       <SearchInterface onSearch={handleSearch} isSearching={isSearching} />
       
       {searchResults && (
-        <ResultsDisplay results={searchResults} />
+        <>
+          <ResultsDisplay results={searchResults} />
+          <div className="mt-8">
+            <FollowUpQuestions 
+              initialQuery={currentQuery}
+              onNewResearch={handleFollowUpResearch}
+              isSearching={isSearching}
+            />
+          </div>
+        </>
       )}
     </div>
   );
