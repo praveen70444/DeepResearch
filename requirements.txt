@@ -1,3 +1,8 @@
+# === Build tools (must come first) ===
+setuptools>=68.0.0
+wheel>=0.42.0
+pip>=25.1
+
 # === Web Framework & API ===
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
@@ -24,7 +29,7 @@ tqdm==4.66.5
 click==8.1.7
 psutil==5.9.8
 
-# === Development & Testing (optional, safe to remove in production) ===
+# === Development & Testing (optional) ===
 pytest==8.2.2
 pytest-cov==5.0.0
 black==24.4.2
