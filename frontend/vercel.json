@@ -20,6 +20,6 @@
     }
   ],
   "env": {
-    "REACT_APP_API_URL": "https://deepresearch-2fou.onrender.com"
+    "REACT_APP_API_URL": "https://deep-research-nu-swart.vercel.app"
   }
 }

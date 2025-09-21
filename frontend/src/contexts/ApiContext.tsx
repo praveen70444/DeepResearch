@@ -18,7 +18,7 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [systemStatus, setSystemStatus] = useState(null);
 
   const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || 'https://deepresearch-2fou.onrender.com',
+    baseURL: process.env.REACT_APP_API_URL || 'https://deep-research-nu-swart.vercel.app',
     timeout: 30000,
     headers: {
       'Content-Type': 'application/json',
