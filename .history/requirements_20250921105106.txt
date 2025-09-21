@@ -1,4 +1,4 @@
-# Deep Researcher - Production Requirements (Minimal)
+# Deep Researcher - Complete Requirements
 # Web Framework & API
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
@@ -9,7 +9,6 @@ numpy>=1.21.0
 sentence-transformers>=2.2.0
 faiss-cpu>=1.7.0
 pydantic>=2.5.0
-torch>=1.12.0
 
 # Document Processing & Parsing
 PyPDF2>=3.0.0
@@ -21,18 +20,13 @@ markdown>=3.4.0
 reportlab>=3.6.0
 fpdf2>=2.5.0
 
-# Database & Storage
-sqlalchemy>=1.4.0
-
 # Utilities & System
 tqdm>=4.64.0
 click>=8.1.0
 psutil>=5.9.0
-python-dotenv>=0.19.0
-requests>=2.28.0
 
-# Async & Concurrency
-aiofiles>=22.1.0
-
-# Security & Validation
-cryptography>=3.4.8
+# Development and testing
+pytest>=7.1.0
+pytest-cov>=4.0.0
+black>=22.0.0
+flake8>=5.0.0

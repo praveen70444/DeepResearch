@@ -433,7 +433,7 @@ if __name__ == "__main__":
     import os
     
     # Get port from environment variable (Render sets this)
-    port = int(os.environ.get("PORT", 8001))
+    port = int(os.environ.get("PORT", 9000))
     
     print("🚀 Starting Deep Researcher API Server...")
     print(f"📡 Backend will be available at: http://0.0.0.0:{port}")
