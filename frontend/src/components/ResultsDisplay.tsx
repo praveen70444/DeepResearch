@@ -324,7 +324,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
           </div>
 
           {/* Enhanced action buttons */}
-          <div className="flex flex-wrap items-center gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex flex-wrap items-center gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 relative">
             <button
               onClick={() => copyToClipboard(research_report.summary)}
               className="flex items-center space-x-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
@@ -334,7 +334,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
             </button>
             
             {/* Export Dropdown */}
-            <div className="relative" ref={exportMenuRef}>
+            <div className="relative inline-block" ref={exportMenuRef}>
               <button
                 onClick={() => setShowExportMenu(!showExportMenu)}
                 className="flex items-center space-x-2 px-4 py-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors"
@@ -345,37 +345,37 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
               </button>
               
               {showExportMenu && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10">
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 z-[9999] overflow-hidden transform translate-y-0">
                   <div className="py-2">
                     <button
                       onClick={() => {
                         exportResearch('txt');
                         setShowExportMenu(false);
                       }}
-                      className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                     >
-                      <FileText className="w-4 h-4 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Export as TXT</span>
+                      <FileText className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <span className="text-gray-700 dark:text-gray-300 font-medium">Export as TXT</span>
                     </button>
                     <button
                       onClick={() => {
                         exportResearch('md');
                         setShowExportMenu(false);
                       }}
-                      className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                     >
-                      <FileCode className="w-4 h-4 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Export as Markdown</span>
+                      <FileCode className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <span className="text-gray-700 dark:text-gray-300 font-medium">Export as Markdown</span>
                     </button>
                     <button
                       onClick={() => {
                         exportResearch('json');
                         setShowExportMenu(false);
                       }}
-                      className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                     >
-                      <File className="w-4 h-4 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Export as JSON</span>
+                      <File className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <span className="text-gray-700 dark:text-gray-300 font-medium">Export as JSON</span>
                     </button>
                   </div>
                 </div>
